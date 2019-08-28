@@ -253,15 +253,14 @@ func NeedFacts(analyzers []*analysis.Analyzer) bool {
 // package (as different analyzers are applied, either in sequence or
 // parallel), and across packages (as dependencies are analyzed).
 type action struct {
+	isroot       bool
 	once         sync.Once
 	a            *analysis.Analyzer
 	pkg          *packages.Package
 	pass         *analysis.Pass
-	isroot       bool
 	deps         []*action
 	objectFacts  map[objectFactKey]analysis.Fact
 	packageFacts map[packageFactKey]analysis.Fact
-	inputs       map[*analysis.Analyzer]interface{}
 	result       interface{}
 	diagnostics  []analysis.Diagnostic
 	err          error

@@ -43,7 +43,6 @@ linters-settings:
 linters:
   enable-all: true
   disable:
-    - maligned
     - prealloc
     - gochecknoglobals
 
@@ -57,6 +56,9 @@ issues:
     - text: "weak cryptographic primitive"
       linters:
         - gosec
+    - path: "^pkg/config.*|^pkg/lint/linter/config.go"
+      linters:
+        - maligned
 
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
