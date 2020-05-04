@@ -233,7 +233,7 @@ linters-settings:
     allow-no-explanation: []
     # Enable to require an explanation after each nolint directive. Default is false.
     require-explanation: true
-    # Enable to require an explanation after each nolint directive. Default is false.
+    # Enable to require a specific linter to be mentioned in each nolint directive. Default is false.
     require-specific: true
   rowserrcheck:
     packages:
