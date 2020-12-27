@@ -30,23 +30,27 @@ func (i *ignoredRange) doesMatch(issue *result.Issue) bool {
 		return false
 	}
 
+	// only allow selective nolinting of nolintlint
+	nolintFoundForLinter := len(i.linters) == 0 && issue.FromLinter != golinters.NolintlintName
+
+	for _, linterName := range i.linters {
+		if linterName == issue.FromLinter {
+			nolintFoundForLinter = true
+			break
+		}
+	}
+
+	if nolintFoundForLinter {
+		return true
+	}
+
 	// handle possible unused nolint directives
 	// nolintlint generates potential issues for every nolint directive and they are filtered out here
-	if issue.ExpectNoLint {
+	if  issue.FromLinter == golinters.NolintlintName && issue.ExpectNoLint {
 		if issue.ExpectedNoLintLinter != "" {
 			return i.matchedIssueFromLinter[issue.ExpectedNoLintLinter]
 		}
 		return len(i.matchedIssueFromLinter) > 0
-	}
-
-	if len(i.linters) == 0 {
-		return true
-	}
-
-	for _, linterName := range i.linters {
-		if linterName == issue.FromLinter {
-			return true
-		}
 	}
 
 	return false
@@ -142,19 +146,14 @@ func (p *Nolint) buildIgnoredRangesForFile(f *ast.File, fset *token.FileSet, fil
 
 func (p *Nolint) shouldPassIssue(i *result.Issue) (bool, error) {
 	nolintDebugf("got issue: %v", *i)
-	if i.FromLinter == golinters.NolintlintName {
-		// always pass nolintlint issues except ones trying find unused nolint directives
-		if !i.ExpectNoLint {
-			return true, nil
+
+	if i.FromLinter == golinters.NolintlintName && i.ExpectNoLint && i.ExpectedNoLintLinter != "" {
+		// don't expect disabled linters to cover their nolint statements
+		nolintDebugf("enabled linters: %v", p.enabledLinters)
+		if p.enabledLinters[i.ExpectedNoLintLinter] == nil {
+			return false, nil
 		}
-		if i.ExpectedNoLintLinter != "" {
-			// don't expect disabled linters to cover their nolint statements
-			nolintDebugf("enabled linters: %v", p.enabledLinters)
-			if p.enabledLinters[i.ExpectedNoLintLinter] == nil {
-				return false, nil
-			}
-			nolintDebugf("checking that lint issue was used for %s: %v", i.ExpectedNoLintLinter, i)
-		}
+		nolintDebugf("checking that lint issue was used for %s: %v", i.ExpectedNoLintLinter, i)
 	}
 
 	fd, err := p.getOrCreateFileData(i)

@@ -202,7 +202,7 @@ func foo() {
 			},
 		},
 		{
-			desc:  "needs unused with multiple specific linter generates replacement for each linter",
+			desc:  "needs unused with multiple specific linters generates a replacement for each linter",
 			needs: NeedsUnused,
 			contents: `
 package bar
@@ -216,8 +216,8 @@ func foo() {
 					&result.Replacement{
 						Inline: &result.InlineFix{
 							StartCol:  17,
-							Length:    22,
-							NewString: "linter2,linter3",
+							Length:    8,
+							NewString: "",
 						},
 					},
 				},
@@ -225,9 +225,9 @@ func foo() {
 					"directive `//nolint:linter1,linter2,linter3` is unused for linter \"linter2\" at testing.go:5:9",
 					&result.Replacement{
 						Inline: &result.InlineFix{
-							StartCol:  17,
-							Length:    22,
-							NewString: "linter1,linter3",
+							StartCol:  25,
+							Length:    8,
+							NewString: "",
 						},
 					},
 				},
@@ -235,9 +235,41 @@ func foo() {
 					"directive `//nolint:linter1,linter2,linter3` is unused for linter \"linter3\" at testing.go:5:9",
 					&result.Replacement{
 						Inline: &result.InlineFix{
-							StartCol:  17,
-							Length:    22,
-							NewString: "linter1,linter2",
+							StartCol:  33,
+							Length:    7,
+							NewString: "",
+						},
+					},
+				},
+			},
+		},
+		{
+			desc:  "needs unused with multiple specific linters generates a replacement preserving space after commas",
+			needs: NeedsUnused,
+			contents: `
+package bar
+
+func foo() {
+  good() //nolint:linter1, linter2
+}`,
+			expected: []issueWithReplacement{
+				{
+					"directive `//nolint:linter1, linter2` is unused for linter \"linter1\" at testing.go:5:10",
+					&result.Replacement{
+						Inline: &result.InlineFix{
+							StartCol:  18,
+							Length:    8,
+							NewString: "",
+						},
+					},
+				},
+				{
+					"directive `//nolint:linter1, linter2` is unused for linter \"linter2\" at testing.go:5:10",
+					&result.Replacement{
+						Inline: &result.InlineFix{
+							StartCol:  26,
+							Length:    8,
+							NewString: "",
 						},
 					},
 				},

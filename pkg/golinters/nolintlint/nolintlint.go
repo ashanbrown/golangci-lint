@@ -208,14 +208,22 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 
 					lintersText, explanation := fullMatches[1], fullMatches[2]
 					var linters []string
+					var linterRange []result.Range
 					if len(lintersText) > 0 {
 						lls := strings.Split(lintersText, ",")
 						linters = make([]string, 0, len(lls))
-						for _, ll := range lls {
-							ll = strings.TrimSpace(ll)
-							if ll != "" {
-								linters = append(linters, ll)
+						rangeStart := (pos.Column - 1) + len("//") + len(leadingSpace) + len("nolint:")
+						for i, ll := range lls {
+							rangeEnd := rangeStart + len(ll)
+							if i < len(lls) - 1 {
+								rangeEnd++ // include trailing comma
 							}
+							trimmedLinterName := strings.TrimSpace(ll)
+							if trimmedLinterName != "" {
+								linters = append(linters, trimmedLinterName)
+								linterRange = append(linterRange, result.Range{From: rangeStart, To: rangeEnd})
+							}
+							rangeStart = rangeEnd
 						}
 					}
 
@@ -244,12 +252,11 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 								issue := UnusedCandidate{BaseIssue: base, ExpectedLinter: linter}
 								replacement := removeNolintCompletely
 								if len(linters) > 1 {
-									otherLinters := append(append([]string(nil), linters[0:i]...), linters[i+1:]...)
 									replacement = &result.Replacement{
 										Inline: &result.InlineFix{
-											StartCol:  (pos.Column - 1) + len("//") + len(leadingSpace) + len("nolint:"),
-											Length:    len(lintersText) - 1,
-											NewString: strings.Join(otherLinters, ","),
+											StartCol:  linterRange[i].From,
+											Length:    linterRange[i].To - linterRange[i].From,
+											NewString: "",
 										},
 									}
 								}
