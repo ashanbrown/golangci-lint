@@ -181,18 +181,21 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 
 					// check for, report and eliminate leading spaces so we can check for other issues
 					if len(leadingSpace) > 0 {
+						removeWhitespace := &result.Replacement{
+							Inline: &result.InlineFix{
+								StartCol:  pos.Column + 1,
+								Length:    len(leadingSpace),
+								NewString: "",
+							},
+						}
 						if (l.needs & NeedsMachineOnly) != 0 {
 							issue := NotMachine{BaseIssue: base}
-							issue.BaseIssue.replacement = &result.Replacement{
-								Inline: &result.InlineFix{
-									StartCol:  pos.Column - 1,
-									Length:    len(leadingSpace) + 2,
-									NewString: "//",
-								},
-							}
+							issue.BaseIssue.replacement = removeWhitespace
 							issues = append(issues, issue)
 						} else if len(leadingSpace) > 1 {
 							issue := ExtraLeadingSpace{BaseIssue: base}
+							issue.BaseIssue.replacement = removeWhitespace
+							issue.BaseIssue.replacement.Inline.NewString = " " // assume a single space was intended 
 							issues = append(issues, issue)
 						}
 					}

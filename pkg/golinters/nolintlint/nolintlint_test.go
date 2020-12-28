@@ -102,9 +102,9 @@ func foo() {
 					"directive `// nolint` should be written without leading space as `//nolint` at testing.go:5:9",
 					&result.Replacement{
 						Inline: &result.InlineFix{
-							StartCol:  8,
-							Length:    3,
-							NewString: "//",
+							StartCol:  10,
+							Length:    1,
+							NewString: "",
 						},
 					},
 				},
@@ -124,9 +124,9 @@ func foo() {
 					"directive `//  nolint` should not have more than one leading space at testing.go:5:9",
 					&result.Replacement{
 						Inline: &result.InlineFix{
-							StartCol:  8,
-							Length:    4,
-							NewString: "//",
+							StartCol:  10,
+							Length:    2,
+							NewString: " ",
 						},
 					},
 				},
