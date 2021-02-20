@@ -195,7 +195,7 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 						} else if len(leadingSpace) > 1 {
 							issue := ExtraLeadingSpace{BaseIssue: base}
 							issue.BaseIssue.replacement = removeWhitespace
-							issue.BaseIssue.replacement.Inline.NewString = " " // assume a single space was intended 
+							issue.BaseIssue.replacement.Inline.NewString = " " // assume a single space was intended
 							issues = append(issues, issue)
 						}
 					}
@@ -215,7 +215,7 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 						rangeStart := (pos.Column - 1) + len("//") + len(leadingSpace) + len("nolint:")
 						for i, ll := range lls {
 							rangeEnd := rangeStart + len(ll)
-							if i < len(lls) - 1 {
+							if i < len(lls)-1 {
 								rangeEnd++ // include trailing comma
 							}
 							trimmedLinterName := strings.TrimSpace(ll)
@@ -248,19 +248,14 @@ func (l Linter) Run(fset *token.FileSet, nodes ...ast.Node) ([]Issue, error) {
 							issue.replacement = removeNolintCompletely
 							issues = append(issues, issue)
 						} else {
-							for i, linter := range linters {
+							for _, linter := range linters {
 								issue := UnusedCandidate{BaseIssue: base, ExpectedLinter: linter}
-								replacement := removeNolintCompletely
-								if len(linters) > 1 {
-									replacement = &result.Replacement{
-										Inline: &result.InlineFix{
-											StartCol:  linterRange[i].From,
-											Length:    linterRange[i].To - linterRange[i].From,
-											NewString: "",
-										},
-									}
+								// only offer replacement if there is a single linter
+								// because of issues around commas and the possibility of all
+								// linters being removed
+								if len(linters) == 1 {
+									issue.replacement = removeNolintCompletely
 								}
-								issue.replacement = replacement
 								issues = append(issues, issue)
 							}
 						}
