@@ -1,6 +1,48 @@
 Follow the news and releases on our [twitter](https://twitter.com/golangci) and our [blog](https://medium.com/golangci).
 There is the most valuable changes log:
 
+## February 2021
+
+1. new linters:
+   * `durationcheck`: https://github.com/charithe/durationcheck
+   * `revive`: https://github.com/mgechev/revive
+   * `cyclop`: https://github.com/bkielbasa/cyclop
+2. update linters:
+   * prealloc: Use upstream version
+   * Use upstream gocyclo
+   * `godot` from 1.3.2 to 1.4.3
+   * `exhaustivestruct` from 1.1.0 to 1.2.0
+   * `forbidigo` from 1.0.0 to 1.1.0
+   * `thelper` from 0.2.1 to 0.3.1
+   * `ruleguard`: print error message and exit with non-zero status when parsing error occurs
+   * fix wrong load mode for `asciicheck`, `exhaustivestruct`, `exportloopref`, and `makezero`
+3. CLI: truncate multiline descriptions
+4. fix: new-from-rev for a large repository
+5. use go1.16 to create binaries 
+6. fix: MIPS release
+7. documentation:
+   * bump documentation dependencies
+
+## January 2021
+
+1. new linters:
+   * `predeclared`: https://github.com/nishanths/predeclared
+   * `ifshort`: https://github.com/esimonov/ifshort
+2. update linters:
+   * `go-critic` from 0.5.2 to 0.5.3
+   * `thelper` from 0.1.0 to 0.2.1
+   * Validate `go-critic` settings
+   * `gofumpt` to v0.1.0
+   * `gci` to v0.2.8
+   * `go-mnd` to v2.3.1
+   * `gosec` from 2.5.0 to 2.6.1
+   * `godot` from 1.3.2 to 1.4.3
+   * `ifshort` to v1.0.1
+   * `rowserrcheck`: fix reports false positive
+3. fix: modules-download-mode support
+4. documentation:
+   * bump documentation dependencies
+
 ## December 2020
 
 1. new linters:
@@ -30,6 +72,8 @@ There is the most valuable changes log:
    * bump `ini` from 1.3.5 to 1.3.8 in /tools (#1560)
    * bump `react-headroom` from 3.0.0 to 3.0.1 in /docs (#1532)
    * bump `react-live` from 2.2.2 to 2.2.3 in /docs (#1534)
+   * bump `react` from 16.13.1 to 16.14.0 in /docs (#1481)
+   * Fix `forbidigo` linter name in reports (#1590)
 
 ### November 2020
 
@@ -130,7 +174,7 @@ There is the most valuable changes log:
    * bump `gatsby-transformer-yaml` from 2.4.10 to 2.4.11 in /docs (#1367)
    * bump `node-fetch` in /.github/contributors (#1363)
    * bump `polished` from 3.6.5 to 3.6.6 in /docs (#1347)
-   
+
 ### August 2020
 
 1. new `nlreturn` linter: https://github.com/ssgreg/nlreturn
