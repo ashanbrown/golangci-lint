@@ -17,7 +17,7 @@ func (e *Executor) executeEnableNewCmd(_ *cobra.Command, args []string) {
 	}
 
 	if e.cfg.Linters.EnableAll {
-		e.log.Fatalf("enable-rest not work with enable all setting")
+		e.log.Fatalf("enable-new is not compatible with the enable-all linters setting")
 	}
 
 	unmentionedLinters, err := e.getUnmentionedLinters()

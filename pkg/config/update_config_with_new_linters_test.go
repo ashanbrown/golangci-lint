@@ -42,7 +42,8 @@ func TestUpdateConfigWithNewLinters(t *testing.T) {
 	t.Run(`when the "linters" -> "enable" node exists, we add to it, matching the indent size`, func(t *testing.T) {
 		cfgFilePath := writeConfig(t, `
 linters:
-   enable: []
+   enable:
+   - other-linter
 `)
 		err := UpdateConfigFileWithNewLinters(cfgFilePath, []string{"new-linter"})
 		require.NoError(t, err)
